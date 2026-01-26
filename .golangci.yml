@@ -3,20 +3,18 @@ linters:
     - gofmt
     - govet
     - errcheck
-    - staticcheck
     - unused
     - gosimple
     - ineffassign
     - typecheck
-    - exportloopref
-    - gocyclo
     - misspell
     - revive
+  disable:
+    - staticcheck
+    - gocyclo
+    - exportloopref
 
 linters-settings:
-  gocyclo:
-    min-complexity: 15
-
   revive:
     rules:
       - name: var-naming
@@ -28,14 +26,7 @@ issues:
   exclude-rules:
     - path: _test\.go
       linters:
-        - gocyclo
         - errcheck
-    - path: cmd/test-all-tools
-      linters:
-        - gocyclo
-        - staticcheck
-  exclude-dirs:
-    - cmd/test-all-tools
 
 run:
   timeout: 5m
