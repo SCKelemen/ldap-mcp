@@ -1,5 +1,5 @@
-# Binaries
-ldap-mcp
+# Binaries (root level only)
+/ldap-mcp
 *.exe
 *.exe~
 *.dll
