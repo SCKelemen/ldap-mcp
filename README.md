@@ -243,7 +243,3 @@ export LDAP_BASE_DN=dc=example,dc=com
 BearWare 1.0 (MIT Compatible) 🐻
 
 See [LICENSE](LICENSE) for the full bear-framed license text.
-
-## Credits
-
-Based on LDAP implementation patterns from [Knugen](https://github.com/King/knugen).
