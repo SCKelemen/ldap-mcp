@@ -13,28 +13,8 @@ import (
 
 func main() {
 	// Load configuration from environment variables
-	config := &ldap.Config{
-		Server:       getEnv("LDAP_SERVER", ""),
-		UseTLS:       getEnv("LDAP_USE_TLS", "false") == "true",
-		BindDN:       getEnv("LDAP_BIND_DN", ""),
-		BindPassword: getEnv("LDAP_BIND_PASSWORD", ""),
-		BaseDN:       getEnv("LDAP_BASE_DN", ""),
-		Timeout:      getEnv("LDAP_TIMEOUT", "10s"),
-	}
-
-	// Validate required configuration
-	if config.Server == "" {
-		log.Fatal("LDAP_SERVER environment variable is required")
-	}
-	if config.BindDN == "" {
-		log.Fatal("LDAP_BIND_DN environment variable is required")
-	}
-	if config.BindPassword == "" {
-		log.Fatal("LDAP_BIND_PASSWORD environment variable is required")
-	}
-	if config.BaseDN == "" {
-		log.Fatal("LDAP_BASE_DN environment variable is required")
-	}
+	config := loadConfig()
+	validateConfig(config)
 
 	// Create MCP server
 	server, err := mcp.NewServer(config)
@@ -60,6 +40,32 @@ func main() {
 	// Run MCP server
 	if err := server.Run(ctx); err != nil {
 		log.Fatalf("Server error: %v", err)
+	}
+}
+
+func loadConfig() *ldap.Config {
+	return &ldap.Config{
+		Server:       getEnv("LDAP_SERVER", ""),
+		UseTLS:       getEnv("LDAP_USE_TLS", "false") == "true",
+		BindDN:       getEnv("LDAP_BIND_DN", ""),
+		BindPassword: getEnv("LDAP_BIND_PASSWORD", ""),
+		BaseDN:       getEnv("LDAP_BASE_DN", ""),
+		Timeout:      getEnv("LDAP_TIMEOUT", "10s"),
+	}
+}
+
+func validateConfig(config *ldap.Config) {
+	if config.Server == "" {
+		log.Fatal("LDAP_SERVER environment variable is required")
+	}
+	if config.BindDN == "" {
+		log.Fatal("LDAP_BIND_DN environment variable is required")
+	}
+	if config.BindPassword == "" {
+		log.Fatal("LDAP_BIND_PASSWORD environment variable is required")
+	}
+	if config.BaseDN == "" {
+		log.Fatal("LDAP_BASE_DN environment variable is required")
 	}
 }
 

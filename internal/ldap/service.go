@@ -205,8 +205,23 @@ func (s *Service) SearchGroup(query string) ([]*GroupInfo, error) {
 }
 
 // GetGroupMembers retrieves all members of a group
-func (s *Service) GetGroupMembers(groupDN string) ([]*UserInfo, error) {
-	var memberDNs []string
+// groupIdentifier can be a group name (CN) or full DN
+func (s *Service) GetGroupMembers(groupIdentifier string) ([]*UserInfo, error) {
+	var memberDNS []string
+
+	// Resolve group identifier to DN
+	var groupDN string
+	if strings.Contains(groupIdentifier, "=") {
+		// Already a DN
+		groupDN = groupIdentifier
+	} else {
+		// Search for the group by name
+		groups, err := s.SearchGroup(groupIdentifier)
+		if err != nil || len(groups) == 0 {
+			return nil, fmt.Errorf("failed to find group: %s", groupIdentifier)
+		}
+		groupDN = groups[0].DN
+	}
 
 	err := s.withConnection(func(conn *ldap.Conn) error {
 		// First get the group entry to retrieve member DNs
@@ -229,7 +244,7 @@ func (s *Service) GetGroupMembers(groupDN string) ([]*UserInfo, error) {
 			return fmt.Errorf("group not found: %s", groupDN)
 		}
 
-		memberDNs = sr.Entries[0].GetAttributeValues(AttrMember)
+		memberDNS = sr.Entries[0].GetAttributeValues(AttrMember)
 		return nil
 	})
 
@@ -237,13 +252,13 @@ func (s *Service) GetGroupMembers(groupDN string) ([]*UserInfo, error) {
 		return nil, err
 	}
 
-	if len(memberDNs) == 0 {
+	if len(memberDNS) == 0 {
 		return []*UserInfo{}, nil
 	}
 
 	// Retrieve user details for each member
-	users := make([]*UserInfo, 0, len(memberDNs))
-	for _, memberDN := range memberDNs {
+	users := make([]*UserInfo, 0, len(memberDNS))
+	for _, memberDN := range memberDNS {
 		user, err := s.GetUserDetails(memberDN)
 		if err != nil {
 			// Skip members that can't be retrieved (might be other groups, etc.)

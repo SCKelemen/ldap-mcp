@@ -75,12 +75,12 @@ func (s *Server) RegisterTools() {
 			InputSchema: map[string]interface{}{
 				"type": "object",
 				"properties": map[string]interface{}{
-					"group_dn": map[string]interface{}{
+					"group_identifier": map[string]interface{}{
 						"type":        "string",
-						"description": "Distinguished name of the group",
+						"description": "Group name (CN) or full distinguished name (DN)",
 					},
 				},
-				"required": []string{"group_dn"},
+				"required": []string{"group_identifier"},
 			},
 		},
 		s.handleGetGroupMembers,
@@ -348,13 +348,13 @@ func (s *Server) handleSearchGroup(ctx context.Context, request *mcp.CallToolReq
 
 func (s *Server) handleGetGroupMembers(ctx context.Context, request *mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 	var input struct {
-		GroupDN string `json:"group_dn"`
+		GroupIdentifier string `json:"group_identifier"`
 	}
 	if err := parseArguments(request.Params.Arguments, &input); err != nil {
 		return nil, fmt.Errorf("invalid arguments: %w", err)
 	}
 
-	members, err := s.ldapService.GetGroupMembers(input.GroupDN)
+	members, err := s.ldapService.GetGroupMembers(input.GroupIdentifier)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get group members: %w", err)
 	}
