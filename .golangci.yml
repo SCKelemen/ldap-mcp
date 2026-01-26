@@ -30,13 +30,13 @@ issues:
       linters:
         - gocyclo
         - errcheck
-    - path: cmd/test-all-tools/
+    - path: cmd/test-all-tools
       linters:
         - gocyclo
         - staticcheck
+  exclude-dirs:
+    - cmd/test-all-tools
 
 run:
   timeout: 5m
   tests: true
-  skip-dirs:
-    - cmd/test-all-tools
