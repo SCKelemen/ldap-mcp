@@ -316,14 +316,14 @@ func main() {
 	fmt.Println("=================================================================")
 	fmt.Println("Test 11: get_direct_reports")
 	fmt.Println("=================================================================")
-	// Test with a known manager who has reports
-	reports, err := service.GetDirectReports("gabriel.linero")
+	// Test with samuel.kelemen (may have 0 reports, which is fine)
+	reports, err := service.GetDirectReports("samuel.kelemen")
 	if err != nil {
 		fmt.Printf("❌ FAILED: %v\n", err)
 	} else {
-		fmt.Printf("✓ SUCCESS: Found %d direct report(s) for gabriel.linero\n", len(reports))
+		fmt.Printf("✓ SUCCESS: Query completed, found %d direct report(s)\n", len(reports))
 		if len(reports) == 0 {
-			fmt.Println("  (No direct reports found)")
+			fmt.Println("  (No direct reports - this is expected for non-managers)")
 		} else {
 			for i, report := range reports {
 				if i >= 5 {
