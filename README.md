@@ -80,6 +80,28 @@ Add to your `claude_desktop_config.json`:
 }
 ```
 
+### Claude Code CLI Configuration
+
+Add to your `~/.claude.json`:
+
+```json
+{
+  "mcpServers": {
+    "ldap": {
+      "type": "stdio",
+      "command": "/path/to/ldap-mcp",
+      "args": [],
+      "env": {
+        "LDAP_SERVER": "ldap.example.com:389",
+        "LDAP_BIND_DN": "cn=serviceaccount,dc=example,dc=com",
+        "LDAP_BIND_PASSWORD": "your-password",
+        "LDAP_BASE_DN": "dc=example,dc=com"
+      }
+    }
+  }
+}
+```
+
 ## Usage Examples
 
 ### Search for a user
@@ -102,12 +124,14 @@ Found user: John Doe (john.doe)
 User: Who are the members of the Engineering team?
 
 Claude:
-[Uses search_group to find "Engineering", then get_group_members]
+[Uses get_group_members with group_identifier="Engineering"]
 Engineering group has 15 members:
 1. John Doe (john.doe@example.com)
 2. Jane Smith (jane.smith@example.com)
 ...
 ```
+
+**Note:** The `get_group_members` tool accepts either a simple group name (e.g., "Engineering") or a full distinguished name (e.g., "CN=Engineering,OU=Groups,DC=example,DC=com").
 
 ### Verify group membership
 
@@ -325,9 +349,22 @@ Search for groups by name or description.
 List all members of a group.
 
 **Parameters:**
-- `group_dn` (string, required): Distinguished name of the group
+- `group_identifier` (string, required): Group name (CN) or full distinguished name (DN)
 
 **Returns:** List of user objects for all group members
+
+**Examples:**
+```json
+// Using group name
+{
+  "group_identifier": "Engineering"
+}
+
+// Using full DN
+{
+  "group_identifier": "CN=Engineering,OU=Groups,DC=example,DC=com"
+}
+```
 
 ### verify_membership
 
