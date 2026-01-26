@@ -1,0 +1,21 @@
+# Example LDAP MCP Server Configuration
+# Copy this file to .ldap-mcp.yaml and fill in your values
+
+ldap:
+  # LDAP server address (host:port)
+  server: ldap.example.com:389
+
+  # Use TLS connection (recommended for production)
+  use_tls: false
+
+  # Service account DN for binding
+  bind_dn: cn=serviceaccount,dc=example,dc=com
+
+  # Service account password
+  bind_password: your-secure-password-here
+
+  # Base DN for searches
+  base_dn: dc=example,dc=com
+
+  # Connection timeout (e.g., "10s", "30s")
+  timeout: 10s
