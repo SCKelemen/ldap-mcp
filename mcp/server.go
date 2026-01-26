@@ -11,18 +11,28 @@ import (
 // Server represents the LDAP MCP server
 type Server struct {
 	server      *mcp.Server
-	ldapService *ldap.CachedService
+	ldapService *ldap.RateLimitedService
 }
 
-// NewServer creates a new LDAP MCP server with default pool and cache configs
+// NewServer creates a new LDAP MCP server with default configurations
 func NewServer(ldapConfig *ldap.Config) (*Server, error) {
-	return NewServerWithConfigs(ldapConfig, ldap.DefaultPoolConfig(), ldap.DefaultCacheConfig())
+	return NewServerWithConfigs(
+		ldapConfig,
+		ldap.DefaultPoolConfig(),
+		ldap.DefaultCacheConfig(),
+		ldap.DefaultRateLimitConfig(),
+	)
 }
 
 // NewServerWithConfigs creates a new LDAP MCP server with custom configurations
-func NewServerWithConfigs(ldapConfig *ldap.Config, poolConfig ldap.PoolConfig, cacheConfig ldap.CacheConfig) (*Server, error) {
-	// Create LDAP service with caching
-	ldapService, err := ldap.NewCachedService(ldapConfig, poolConfig, cacheConfig)
+func NewServerWithConfigs(
+	ldapConfig *ldap.Config,
+	poolConfig ldap.PoolConfig,
+	cacheConfig ldap.CacheConfig,
+	rateLimitConfig ldap.RateLimitConfig,
+) (*Server, error) {
+	// Create LDAP service with caching and rate limiting
+	ldapService, err := ldap.NewRateLimitedService(ldapConfig, poolConfig, cacheConfig, rateLimitConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -31,7 +41,7 @@ func NewServerWithConfigs(ldapConfig *ldap.Config, poolConfig ldap.PoolConfig, c
 	mcpServer := mcp.NewServer(
 		&mcp.Implementation{
 			Name:    "ldap-mcp",
-			Version: "0.2.0", // Bumped version for caching support
+			Version: "0.3.0", // Bumped version for rate limiting support
 		},
 		nil, // ServerOptions
 	)
@@ -47,6 +57,8 @@ func NewServerWithConfigs(ldapConfig *ldap.Config, poolConfig ldap.PoolConfig, c
 	log.Printf("LDAP MCP Server initialized:")
 	log.Printf("  Connection Pool: max=%d, min=%d", poolConfig.MaxConns, poolConfig.MinConns)
 	log.Printf("  Cache: enabled=%v, ttl=%s", cacheConfig.Enabled, cacheConfig.DefaultTTL)
+	log.Printf("  Rate Limit: enabled=%v, qps=%.1f, burst=%d",
+		rateLimitConfig.Enabled, rateLimitConfig.QueriesPerSec, rateLimitConfig.BurstSize)
 
 	return s, nil
 }
