@@ -41,13 +41,13 @@ func main() {
 
 	// Create rate-limited service with strict limits for testing
 	rateLimitConfig := ldap.RateLimitConfig{
-		Enabled:      true,
-		QueriesPerSec: 5.0,  // 5 queries per second
-		BurstSize:    10,    // Allow burst of 10
+		Enabled:       true,
+		QueriesPerSec: 5.0, // 5 queries per second
+		BurstSize:     10,  // Allow burst of 10
 	}
 
 	cacheConfig := ldap.CacheConfig{
-		Enabled:    false, // Disable cache to test rate limiting accurately
+		Enabled: false, // Disable cache to test rate limiting accurately
 	}
 
 	service, err := ldap.NewRateLimitedService(

@@ -76,9 +76,9 @@ func TestPoolStats(t *testing.T) {
 	// This test doesn't require a real LDAP connection
 	// It just tests the stats structure
 	stats := PoolStats{
-		TotalConns:   10,
-		IdleConns:    5,
-		ActiveConns:  4,
+		TotalConns:     10,
+		IdleConns:      5,
+		ActiveConns:    4,
 		UnhealthyConns: 1,
 	}
 

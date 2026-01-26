@@ -24,19 +24,19 @@ type Cache struct {
 
 // CacheConfig represents cache configuration
 type CacheConfig struct {
-	Enabled       bool          // Enable/disable caching
-	DefaultTTL    time.Duration // Default TTL for cache entries
+	Enabled         bool          // Enable/disable caching
+	DefaultTTL      time.Duration // Default TTL for cache entries
 	CleanupInterval time.Duration // How often to run cleanup of expired entries
-	MaxEntries    int           // Maximum number of entries (0 = unlimited)
+	MaxEntries      int           // Maximum number of entries (0 = unlimited)
 }
 
 // DefaultCacheConfig returns sensible defaults for caching
 func DefaultCacheConfig() CacheConfig {
 	return CacheConfig{
-		Enabled:       true,
-		DefaultTTL:    5 * time.Minute,
+		Enabled:         true,
+		DefaultTTL:      5 * time.Minute,
 		CleanupInterval: 1 * time.Minute,
-		MaxEntries:    1000,
+		MaxEntries:      1000,
 	}
 }
 
@@ -197,9 +197,9 @@ func (c *Cache) cleanup(interval time.Duration) {
 
 // Stats returns cache statistics
 type CacheStats struct {
-	Enabled     bool
-	Entries     int
-	TTL         time.Duration
+	Enabled bool
+	Entries int
+	TTL     time.Duration
 }
 
 // Stats returns current cache statistics

@@ -27,10 +27,10 @@ func TestDefaultCacheConfig(t *testing.T) {
 
 func TestCacheBasicOperations(t *testing.T) {
 	config := CacheConfig{
-		Enabled:       true,
-		DefaultTTL:    1 * time.Second,
+		Enabled:         true,
+		DefaultTTL:      1 * time.Second,
 		CleanupInterval: 100 * time.Millisecond,
-		MaxEntries:    10,
+		MaxEntries:      10,
 	}
 
 	cache := NewCache(config)
@@ -63,10 +63,10 @@ func TestCacheBasicOperations(t *testing.T) {
 
 func TestCacheExpiration(t *testing.T) {
 	config := CacheConfig{
-		Enabled:       true,
-		DefaultTTL:    100 * time.Millisecond,
+		Enabled:         true,
+		DefaultTTL:      100 * time.Millisecond,
 		CleanupInterval: 50 * time.Millisecond,
-		MaxEntries:    10,
+		MaxEntries:      10,
 	}
 
 	cache := NewCache(config)
@@ -92,10 +92,10 @@ func TestCacheExpiration(t *testing.T) {
 
 func TestCacheInvalidate(t *testing.T) {
 	config := CacheConfig{
-		Enabled:       true,
-		DefaultTTL:    1 * time.Minute,
+		Enabled:         true,
+		DefaultTTL:      1 * time.Minute,
 		CleanupInterval: 100 * time.Millisecond,
-		MaxEntries:    10,
+		MaxEntries:      10,
 	}
 
 	cache := NewCache(config)
@@ -121,10 +121,10 @@ func TestCacheInvalidate(t *testing.T) {
 
 func TestCacheClear(t *testing.T) {
 	config := CacheConfig{
-		Enabled:       true,
-		DefaultTTL:    1 * time.Minute,
+		Enabled:         true,
+		DefaultTTL:      1 * time.Minute,
 		CleanupInterval: 100 * time.Millisecond,
-		MaxEntries:    10,
+		MaxEntries:      10,
 	}
 
 	cache := NewCache(config)
@@ -156,10 +156,10 @@ func TestCacheClear(t *testing.T) {
 
 func TestCacheCustomTTL(t *testing.T) {
 	config := CacheConfig{
-		Enabled:       true,
-		DefaultTTL:    1 * time.Second,
+		Enabled:         true,
+		DefaultTTL:      1 * time.Second,
 		CleanupInterval: 100 * time.Millisecond,
-		MaxEntries:    10,
+		MaxEntries:      10,
 	}
 
 	cache := NewCache(config)
@@ -207,10 +207,10 @@ func TestDisabledCache(t *testing.T) {
 
 func TestCacheKeyGeneration(t *testing.T) {
 	config := CacheConfig{
-		Enabled:       true,
-		DefaultTTL:    1 * time.Minute,
+		Enabled:         true,
+		DefaultTTL:      1 * time.Minute,
 		CleanupInterval: 100 * time.Millisecond,
-		MaxEntries:    10,
+		MaxEntries:      10,
 	}
 
 	cache := NewCache(config)
@@ -239,10 +239,10 @@ func TestCacheKeyGeneration(t *testing.T) {
 
 func TestCacheStats(t *testing.T) {
 	config := CacheConfig{
-		Enabled:       true,
-		DefaultTTL:    5 * time.Minute,
+		Enabled:         true,
+		DefaultTTL:      5 * time.Minute,
 		CleanupInterval: 100 * time.Millisecond,
-		MaxEntries:    10,
+		MaxEntries:      10,
 	}
 
 	cache := NewCache(config)

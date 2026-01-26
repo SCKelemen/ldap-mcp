@@ -9,27 +9,27 @@ import (
 
 // RateLimiter implements a token bucket rate limiter
 type RateLimiter struct {
-	tokens      float64       // Current number of tokens
-	maxTokens   float64       // Maximum tokens (burst size)
-	refillRate  float64       // Tokens added per second
-	lastRefill  time.Time     // Last time tokens were refilled
-	mu          sync.Mutex
-	enabled     bool
+	tokens     float64   // Current number of tokens
+	maxTokens  float64   // Maximum tokens (burst size)
+	refillRate float64   // Tokens added per second
+	lastRefill time.Time // Last time tokens were refilled
+	mu         sync.Mutex
+	enabled    bool
 }
 
 // RateLimitConfig represents rate limiter configuration
 type RateLimitConfig struct {
-	Enabled      bool    // Enable/disable rate limiting
+	Enabled       bool    // Enable/disable rate limiting
 	QueriesPerSec float64 // Maximum queries per second
-	BurstSize    int     // Maximum burst size (queries that can be done instantly)
+	BurstSize     int     // Maximum burst size (queries that can be done instantly)
 }
 
 // DefaultRateLimitConfig returns sensible defaults for rate limiting
 func DefaultRateLimitConfig() RateLimitConfig {
 	return RateLimitConfig{
-		Enabled:      true,
-		QueriesPerSec: 10.0,  // 10 queries per second
-		BurstSize:    20,     // Allow bursts of up to 20 queries
+		Enabled:       true,
+		QueriesPerSec: 10.0, // 10 queries per second
+		BurstSize:     20,   // Allow bursts of up to 20 queries
 	}
 }
 
@@ -127,10 +127,10 @@ func (rl *RateLimiter) TryAcquire() bool {
 
 // Stats returns current rate limiter statistics
 type RateLimitStats struct {
-	Enabled       bool
+	Enabled         bool
 	AvailableTokens float64
-	MaxTokens     float64
-	RefillRate    float64
+	MaxTokens       float64
+	RefillRate      float64
 }
 
 // Stats returns current rate limiter statistics
@@ -145,10 +145,10 @@ func (rl *RateLimiter) Stats() RateLimitStats {
 	rl.refill()
 
 	return RateLimitStats{
-		Enabled:       true,
+		Enabled:         true,
 		AvailableTokens: rl.tokens,
-		MaxTokens:     rl.maxTokens,
-		RefillRate:    rl.refillRate,
+		MaxTokens:       rl.maxTokens,
+		RefillRate:      rl.refillRate,
 	}
 }
 

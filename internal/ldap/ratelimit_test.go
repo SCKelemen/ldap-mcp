@@ -24,9 +24,9 @@ func TestDefaultRateLimitConfig(t *testing.T) {
 
 func TestRateLimiterBasicOperation(t *testing.T) {
 	config := RateLimitConfig{
-		Enabled:      true,
+		Enabled:       true,
 		QueriesPerSec: 10.0,
-		BurstSize:    5,
+		BurstSize:     5,
 	}
 
 	limiter := NewRateLimiter(config)
@@ -51,9 +51,9 @@ func TestRateLimiterBasicOperation(t *testing.T) {
 
 func TestRateLimiterRefill(t *testing.T) {
 	config := RateLimitConfig{
-		Enabled:      true,
+		Enabled:       true,
 		QueriesPerSec: 10.0, // 10 tokens per second = 100ms per token
-		BurstSize:    2,
+		BurstSize:     2,
 	}
 
 	limiter := NewRateLimiter(config)
@@ -79,9 +79,9 @@ func TestRateLimiterRefill(t *testing.T) {
 
 func TestRateLimiterTryAcquire(t *testing.T) {
 	config := RateLimitConfig{
-		Enabled:      true,
+		Enabled:       true,
 		QueriesPerSec: 10.0,
-		BurstSize:    3,
+		BurstSize:     3,
 	}
 
 	limiter := NewRateLimiter(config)
@@ -101,9 +101,9 @@ func TestRateLimiterTryAcquire(t *testing.T) {
 
 func TestRateLimiterContextCancellation(t *testing.T) {
 	config := RateLimitConfig{
-		Enabled:      true,
+		Enabled:       true,
 		QueriesPerSec: 1.0, // Very slow rate
-		BurstSize:    1,
+		BurstSize:     1,
 	}
 
 	limiter := NewRateLimiter(config)
@@ -143,9 +143,9 @@ func TestRateLimiterContextCancellation(t *testing.T) {
 
 func TestRateLimiterStats(t *testing.T) {
 	config := RateLimitConfig{
-		Enabled:      true,
+		Enabled:       true,
 		QueriesPerSec: 5.0,
-		BurstSize:    10,
+		BurstSize:     10,
 	}
 
 	limiter := NewRateLimiter(config)
@@ -220,9 +220,9 @@ func TestDisabledRateLimiter(t *testing.T) {
 
 func TestRateLimiterRefillAccuracy(t *testing.T) {
 	config := RateLimitConfig{
-		Enabled:      true,
+		Enabled:       true,
 		QueriesPerSec: 5.0, // 5 tokens per second = 200ms per token
-		BurstSize:    5,
+		BurstSize:     5,
 	}
 
 	limiter := NewRateLimiter(config)
@@ -247,9 +247,9 @@ func TestRateLimiterRefillAccuracy(t *testing.T) {
 
 func TestRateLimiterBurstLimit(t *testing.T) {
 	config := RateLimitConfig{
-		Enabled:      true,
+		Enabled:       true,
 		QueriesPerSec: 100.0, // Fast refill rate
-		BurstSize:    3,
+		BurstSize:     3,
 	}
 
 	limiter := NewRateLimiter(config)

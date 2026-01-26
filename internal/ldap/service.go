@@ -44,7 +44,7 @@ func (s *Service) withConnection(fn func(*ldap.Conn) error) error {
 	if err := fn(conn); err != nil {
 		// Mark connection as unhealthy if there's an LDAP error
 		if ldap.IsErrorWithCode(err, ldap.ErrorNetwork) ||
-		   ldap.IsErrorWithCode(err, ldap.LDAPResultUnwillingToPerform) {
+			ldap.IsErrorWithCode(err, ldap.LDAPResultUnwillingToPerform) {
 			s.pool.MarkUnhealthy(conn)
 		}
 		return err

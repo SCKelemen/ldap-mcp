@@ -17,11 +17,11 @@ var (
 
 // PoolConfig represents connection pool configuration
 type PoolConfig struct {
-	MaxConns     int           // Maximum number of connections in the pool
-	MinConns     int           // Minimum number of idle connections to maintain
-	MaxIdleTime  time.Duration // Maximum time a connection can be idle before being closed
-	DialTimeout  time.Duration // Timeout for establishing new connections
-	HealthCheck  time.Duration // Interval for health check pings
+	MaxConns    int           // Maximum number of connections in the pool
+	MinConns    int           // Minimum number of idle connections to maintain
+	MaxIdleTime time.Duration // Maximum time a connection can be idle before being closed
+	DialTimeout time.Duration // Timeout for establishing new connections
+	HealthCheck time.Duration // Interval for health check pings
 }
 
 // DefaultPoolConfig returns sensible defaults for the connection pool
@@ -37,10 +37,10 @@ func DefaultPoolConfig() PoolConfig {
 
 // pooledConn wraps an LDAP connection with metadata
 type pooledConn struct {
-	conn       *ldap.Conn
-	lastUsed   time.Time
-	inUse      bool
-	unhealthy  bool
+	conn      *ldap.Conn
+	lastUsed  time.Time
+	inUse     bool
+	unhealthy bool
 }
 
 // ConnectionPool manages a pool of LDAP connections
@@ -282,9 +282,9 @@ func (p *ConnectionPool) Close() error {
 
 // Stats returns current pool statistics
 type PoolStats struct {
-	TotalConns   int
-	IdleConns    int
-	ActiveConns  int
+	TotalConns     int
+	IdleConns      int
+	ActiveConns    int
 	UnhealthyConns int
 }
 
