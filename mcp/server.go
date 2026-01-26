@@ -11,13 +11,18 @@ import (
 // Server represents the LDAP MCP server
 type Server struct {
 	server      *mcp.Server
-	ldapService *ldap.Service
+	ldapService *ldap.CachedService
 }
 
-// NewServer creates a new LDAP MCP server
+// NewServer creates a new LDAP MCP server with default pool and cache configs
 func NewServer(ldapConfig *ldap.Config) (*Server, error) {
-	// Create LDAP service
-	ldapService, err := ldap.NewService(ldapConfig)
+	return NewServerWithConfigs(ldapConfig, ldap.DefaultPoolConfig(), ldap.DefaultCacheConfig())
+}
+
+// NewServerWithConfigs creates a new LDAP MCP server with custom configurations
+func NewServerWithConfigs(ldapConfig *ldap.Config, poolConfig ldap.PoolConfig, cacheConfig ldap.CacheConfig) (*Server, error) {
+	// Create LDAP service with caching
+	ldapService, err := ldap.NewCachedService(ldapConfig, poolConfig, cacheConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -26,7 +31,7 @@ func NewServer(ldapConfig *ldap.Config) (*Server, error) {
 	mcpServer := mcp.NewServer(
 		&mcp.Implementation{
 			Name:    "ldap-mcp",
-			Version: "0.1.0",
+			Version: "0.2.0", // Bumped version for caching support
 		},
 		nil, // ServerOptions
 	)
@@ -38,6 +43,10 @@ func NewServer(ldapConfig *ldap.Config) (*Server, error) {
 
 	// Register tools
 	s.RegisterTools()
+
+	log.Printf("LDAP MCP Server initialized:")
+	log.Printf("  Connection Pool: max=%d, min=%d", poolConfig.MaxConns, poolConfig.MinConns)
+	log.Printf("  Cache: enabled=%v, ttl=%s", cacheConfig.Enabled, cacheConfig.DefaultTTL)
 
 	return s, nil
 }
