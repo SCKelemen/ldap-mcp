@@ -5,6 +5,7 @@ go 1.23.0
 require (
 	github.com/go-ldap/ldap/v3 v3.4.8
 	github.com/modelcontextprotocol/go-sdk v1.2.0
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (

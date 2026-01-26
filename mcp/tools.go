@@ -158,7 +158,109 @@ func (s *Server) RegisterTools() {
 		s.handleGetUserGroups,
 	)
 
-	fmt.Println("Registered 7 LDAP query tools")
+	// Tool: search_ou
+	s.server.AddTool(
+		&mcp.Tool{
+			Name:        "search_ou",
+			Description: "Search for organizational units (OUs) in LDAP directory",
+			InputSchema: map[string]interface{}{
+				"type": "object",
+				"properties": map[string]interface{}{
+					"query": map[string]interface{}{
+						"type":        "string",
+						"description": "OU name or substring to search for",
+					},
+				},
+				"required": []string{"query"},
+			},
+		},
+		s.handleSearchOU,
+	)
+
+	// Tool: get_computer
+	s.server.AddTool(
+		&mcp.Tool{
+			Name:        "get_computer",
+			Description: "Get information about a computer object in Active Directory",
+			InputSchema: map[string]interface{}{
+				"type": "object",
+				"properties": map[string]interface{}{
+					"name": map[string]interface{}{
+						"type":        "string",
+						"description": "Computer name",
+					},
+				},
+				"required": []string{"name"},
+			},
+		},
+		s.handleGetComputer,
+	)
+
+	// Tool: bulk_user_lookup
+	s.server.AddTool(
+		&mcp.Tool{
+			Name:        "bulk_user_lookup",
+			Description: "Efficiently lookup multiple users at once by email, username, or DN",
+			InputSchema: map[string]interface{}{
+				"type": "object",
+				"properties": map[string]interface{}{
+					"identifiers": map[string]interface{}{
+						"type":        "array",
+						"description": "Array of user identifiers (emails, usernames, or DNs)",
+						"items": map[string]string{
+							"type": "string",
+						},
+					},
+				},
+				"required": []string{"identifiers"},
+			},
+		},
+		s.handleBulkUserLookup,
+	)
+
+	// Tool: get_direct_reports
+	s.server.AddTool(
+		&mcp.Tool{
+			Name:        "get_direct_reports",
+			Description: "Get all direct reports (employees) reporting to a manager",
+			InputSchema: map[string]interface{}{
+				"type": "object",
+				"properties": map[string]interface{}{
+					"manager_identifier": map[string]interface{}{
+						"type":        "string",
+						"description": "Manager's email, username, or DN",
+					},
+				},
+				"required": []string{"manager_identifier"},
+			},
+		},
+		s.handleGetDirectReports,
+	)
+
+	// Tool: search_by_attributes
+	s.server.AddTool(
+		&mcp.Tool{
+			Name:        "search_by_attributes",
+			Description: "Flexible search using multiple LDAP attributes",
+			InputSchema: map[string]interface{}{
+				"type": "object",
+				"properties": map[string]interface{}{
+					"attributes": map[string]interface{}{
+						"type":        "object",
+						"description": "Map of attribute names to search values",
+					},
+					"object_class": map[string]interface{}{
+						"type":        "string",
+						"description": "Optional object class filter (e.g., 'user', 'group')",
+					},
+				},
+				"required": []string{"attributes"},
+			},
+		},
+		s.handleSearchByAttributes,
+	)
+
+	fmt.Println("Registered 12 LDAP query tools")
 }
 
 // Tool handlers
@@ -348,6 +450,142 @@ func (s *Server) handleGetUserGroups(ctx context.Context, request *mcp.CallToolR
 	}
 
 	data, err := json.MarshalIndent(groups, "", "  ")
+	if err != nil {
+		return nil, err
+	}
+
+	return &mcp.CallToolResult{
+		Content: []mcp.Content{
+			&mcp.TextContent{
+				Text: string(data),
+			},
+		},
+	}, nil
+}
+
+func (s *Server) handleSearchOU(ctx context.Context, request *mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	var input struct {
+		Query string `json:"query"`
+	}
+	if err := parseArguments(request.Params.Arguments, &input); err != nil {
+		return nil, fmt.Errorf("invalid arguments: %w", err)
+	}
+
+	ous, err := s.ldapService.SearchOU(input.Query)
+	if err != nil {
+		return nil, fmt.Errorf("OU search failed: %w", err)
+	}
+
+	data, err := json.MarshalIndent(ous, "", "  ")
+	if err != nil {
+		return nil, err
+	}
+
+	return &mcp.CallToolResult{
+		Content: []mcp.Content{
+			&mcp.TextContent{
+				Text: string(data),
+			},
+		},
+	}, nil
+}
+
+func (s *Server) handleGetComputer(ctx context.Context, request *mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	var input struct {
+		Name string `json:"name"`
+	}
+	if err := parseArguments(request.Params.Arguments, &input); err != nil {
+		return nil, fmt.Errorf("invalid arguments: %w", err)
+	}
+
+	computer, err := s.ldapService.GetComputer(input.Name)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get computer: %w", err)
+	}
+
+	data, err := json.MarshalIndent(computer, "", "  ")
+	if err != nil {
+		return nil, err
+	}
+
+	return &mcp.CallToolResult{
+		Content: []mcp.Content{
+			&mcp.TextContent{
+				Text: string(data),
+			},
+		},
+	}, nil
+}
+
+func (s *Server) handleBulkUserLookup(ctx context.Context, request *mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	var input struct {
+		Identifiers []string `json:"identifiers"`
+	}
+	if err := parseArguments(request.Params.Arguments, &input); err != nil {
+		return nil, fmt.Errorf("invalid arguments: %w", err)
+	}
+
+	users, err := s.ldapService.BulkUserLookup(input.Identifiers)
+	if err != nil {
+		return nil, fmt.Errorf("bulk lookup failed: %w", err)
+	}
+
+	data, err := json.MarshalIndent(users, "", "  ")
+	if err != nil {
+		return nil, err
+	}
+
+	return &mcp.CallToolResult{
+		Content: []mcp.Content{
+			&mcp.TextContent{
+				Text: string(data),
+			},
+		},
+	}, nil
+}
+
+func (s *Server) handleGetDirectReports(ctx context.Context, request *mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	var input struct {
+		ManagerIdentifier string `json:"manager_identifier"`
+	}
+	if err := parseArguments(request.Params.Arguments, &input); err != nil {
+		return nil, fmt.Errorf("invalid arguments: %w", err)
+	}
+
+	reports, err := s.ldapService.GetDirectReports(input.ManagerIdentifier)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get direct reports: %w", err)
+	}
+
+	data, err := json.MarshalIndent(reports, "", "  ")
+	if err != nil {
+		return nil, err
+	}
+
+	return &mcp.CallToolResult{
+		Content: []mcp.Content{
+			&mcp.TextContent{
+				Text: string(data),
+			},
+		},
+	}, nil
+}
+
+func (s *Server) handleSearchByAttributes(ctx context.Context, request *mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	var input struct {
+		Attributes  map[string]string `json:"attributes"`
+		ObjectClass string            `json:"object_class"`
+	}
+	if err := parseArguments(request.Params.Arguments, &input); err != nil {
+		return nil, fmt.Errorf("invalid arguments: %w", err)
+	}
+
+	results, err := s.ldapService.SearchByAttributes(input.Attributes, input.ObjectClass)
+	if err != nil {
+		return nil, fmt.Errorf("attribute search failed: %w", err)
+	}
+
+	data, err := json.MarshalIndent(results, "", "  ")
 	if err != nil {
 		return nil, err
 	}

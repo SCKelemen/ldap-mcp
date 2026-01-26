@@ -2,12 +2,12 @@ package ldap
 
 // Config represents LDAP connection configuration
 type Config struct {
-	Server       string `json:"server"`        // LDAP server address (host:port)
-	UseTLS       bool   `json:"use_tls"`       // Use TLS connection
-	BindDN       string `json:"bind_dn"`       // Service account DN for binding
-	BindPassword string `json:"bind_password"` // Service account password
-	BaseDN       string `json:"base_dn"`       // Base DN for searches
-	Timeout      string `json:"timeout"`       // Connection timeout (e.g., "10s")
+	Server       string `json:"server" yaml:"server"`               // LDAP server address (host:port)
+	UseTLS       bool   `json:"use_tls" yaml:"use_tls"`             // Use TLS connection
+	BindDN       string `json:"bind_dn" yaml:"bind_dn"`             // Service account DN for binding
+	BindPassword string `json:"bind_password" yaml:"bind_password"` // Service account password
+	BaseDN       string `json:"base_dn" yaml:"base_dn"`             // Base DN for searches
+	Timeout      string `json:"timeout" yaml:"timeout"`             // Connection timeout (e.g., "10s")
 }
 
 // UserInfo represents detailed user information from LDAP
@@ -46,6 +46,29 @@ type SearchResult struct {
 	Attributes map[string]string `json:"attributes"`
 }
 
+// OUInfo represents organizational unit information
+type OUInfo struct {
+	DN          string `json:"dn"`
+	Name        string `json:"name"`        // ou
+	Description string `json:"description,omitempty"`
+	Street      string `json:"street,omitempty"`
+	City        string `json:"city,omitempty"`
+	State       string `json:"state,omitempty"`
+	Country     string `json:"country,omitempty"`
+}
+
+// ComputerInfo represents computer object information
+type ComputerInfo struct {
+	DN              string `json:"dn"`
+	Name            string `json:"name"`            // cn
+	DNSHostName     string `json:"dns_hostname"`    // dNSHostName
+	OperatingSystem string `json:"operating_system,omitempty"` // operatingSystem
+	OSVersion       string `json:"os_version,omitempty"` // operatingSystemVersion
+	Description     string `json:"description,omitempty"`
+	LastLogon       string `json:"last_logon,omitempty"` // lastLogonTimestamp
+	Enabled         bool   `json:"enabled"`
+}
+
 // Common LDAP attribute names
 const (
 	AttrSAMAccountName     = "sAMAccountName"
@@ -66,13 +89,25 @@ const (
 	AttrDescription        = "description"
 	AttrGroupType          = "groupType"
 	AttrObjectClass        = "objectClass"
+	AttrOU                 = "ou"
+	AttrStreet             = "street"
+	AttrL                  = "l" // locality/city
+	AttrST                 = "st" // state
+	AttrC                  = "c" // country
+	AttrDNSHostName        = "dNSHostName"
+	AttrOperatingSystem    = "operatingSystem"
+	AttrOSVersion          = "operatingSystemVersion"
+	AttrLastLogonTimestamp = "lastLogonTimestamp"
+	AttrDirectReports      = "directReports"
 )
 
 // Common LDAP object classes
 const (
-	ObjectClassPerson = "person"
-	ObjectClassUser   = "user"
-	ObjectClassGroup  = "group"
+	ObjectClassPerson              = "person"
+	ObjectClassUser                = "user"
+	ObjectClassGroup               = "group"
+	ObjectClassOrganizationalUnit  = "organizationalUnit"
+	ObjectClassComputer            = "computer"
 )
 
 // UserAccountControl flags
