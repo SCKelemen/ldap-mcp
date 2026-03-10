@@ -45,7 +45,7 @@ jobs:
         GOOS=windows GOARCH=amd64 go build -o ldap-mcp-windows-amd64.exe -ldflags="-s -w" ./cmd/ldap-mcp
 
     - name: Create Release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: |
           ldap-mcp-linux-amd64
